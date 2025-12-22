@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Registration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #d3d3d3;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 420px;
+            background: #fff;
+            margin: 40px auto;
+            padding: 25px;
+            border-radius: 6px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #6b2c2c;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        .mobile-box {
+            display: flex;
+        }
+
+        .code {
+            padding: 8px;
+            background: #eee;
+            border: 1px solid #ccc;
+            border-right: none;
+        }
+
+        .mobile-box input {
+            border-radius: 0 4px 4px 0;
+        }
+
+        .gender {
+            display: flex;
+            gap: 15px;
+        }
+
+        .error {
+            color: red;
+            font-size: 12px;
+            display: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            border: none;
+            color: white;
+            cursor: pointer;
+            opacity: 0.6;
+        }
+
+        button:enabled {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>User Registration</h2>
+
+    <form id="form">
+
+        <div class="form-group">
+            <label>Full Name</label>
+            <input id="name">
+            <span class="error" id="nameErr">Only alphabets allowed</span>
+        </div>
+
+        <div class="form-group">
+            <label>Address</label>
+            <textarea id="address" rows="3"></textarea>
+            <span class="error" id="addrErr">Address required</span>
+        </div>
+
+        <div class="form-group">
+            <label>Mobile Number</label>
+            <div class="mobile-box">
+                <div class="code">+91</div>
+                <input id="mobile" maxlength="10">
+            </div>
+            <span class="error" id="mobErr">
+                Must start with 6–9 and be 10 digits
+            </span>
+        </div>
+
+        <div class="form-group">
+            <label>Email</label>
+            <input id="email">
+            <span class="error" id="emailErr">
+                Only Gmail allowed
+            </span>
+        </div>
+
+        <div class="form-group">
+            <label>Gender</label>
+            <div class="gender">
+                <label><input type="radio" name="gender" value="Male"> Male</label>
+                <label><input type="radio" name="gender" value="Female"> Female</label>
+                <label><input type="radio" name="gender" value="Others"> Others</label>
+            </div>
+            <span class="error" id="genderErr">Select gender</span>
+        </div>
+
+        <div class="form-group">
+            <label>Date of Birth</label>
+            <input type="date" id="dob">
+        </div>
+
+        <button id="submit" disabled>Submit</button>
+    </form>
+</div>
+
+<script>
+$(function () {
+
+    function validate() {
+        let ok = true;
+
+        const name = $("#name").val().trim();
+        const addr = $("#address").val().trim();
+        const mob = $("#mobile").val().trim();
+        const email = $("#email").val().trim();
+        const gender = $("input[name='gender']:checked").val();
+
+        const nameR = /^[A-Za-z ]+$/;
+        const mobR = /^[6-9][0-9]{9}$/;
+        const gmailR = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+
+        $("#nameErr").toggle(!nameR.test(name));
+        $("#addrErr").toggle(addr === "");
+        $("#mobErr").toggle(!mobR.test(mob));
+        $("#emailErr").toggle(!gmailR.test(email));
+        $("#genderErr").toggle(!gender);
+
+        if (
+            !nameR.test(name) ||
+            addr === "" ||
+            !mobR.test(mob) ||
+            !gmailR.test(email) ||
+            !gender
+        ) ok = false;
+
+        $("#submit").prop("disabled", !ok);
+        return ok;
+    }
+
+    $("input, textarea").on("keyup change", validate);
+
+    $("#form").submit(function (e) {
+        e.preventDefault();
+        if (!validate()) return;
+
+        const data = {
+            name,
+            address: $("#address").val(),
+            mobile: "+91" + $("#mobile").val(),
+            email: $("#email").val(),
+            gender,
+            dob: $("#dob").val()
+        };
+
+        localStorage.setItem("userData", JSON.stringify(data));
+        alert("Registration successful!");
+    });
+
+});
+</script>
+
+</body>
+</html>
